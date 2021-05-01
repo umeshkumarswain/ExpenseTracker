@@ -3,11 +3,11 @@ import useStyles from './styles';
 import { FormControl, Grid, InputLabel, Select, TextField, Typography,MenuItem,Button } from '@material-ui/core'
 import   ExpenseTrackerContext  from "../../../context/context";
 import { v4 as uuidv4 } from 'uuid';
-
-
+import {  incomeCategories,expenseCategories} from "../../../constants/categories";
+import  formatDate  from "../../../utils/formatDate";
 const Form = () => {
     const initialState=[
-        {amount:'',category:'',type:'Income',date:new Date()}
+        {amount:'',category:'',type:'Income',date:formatDate(new Date())}
     ];
     const classes = useStyles();
     const [formData,setformData] = useState(initialState);
@@ -18,7 +18,10 @@ const Form = () => {
         addTransaction(transaction);
         setformData(initialState);
     }
-   
+   const selectedCatagories = formData.type === 'Income' ?incomeCategories:expenseCategories ;
+
+
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -45,8 +48,11 @@ const Form = () => {
                         onChange = {(e) => setformData({...formData,category:e.target.value
                         })}
                     >
-                        <MenuItem value="Category 1">Category 1</MenuItem>
-                        <MenuItem value="Category 2">Category 2</MenuItem>
+                        {
+                            selectedCatagories.map((c)=>
+                                <MenuItem key={c.type} value={c.type}>{c.type}</MenuItem>
+                            )
+                        }
                     </Select>
                 </FormControl>
             </Grid>
@@ -59,7 +65,7 @@ const Form = () => {
             <Grid item xs={6}>
                 <TextField type='date' label='Date' fullWidth 
                     value = {formData.date}
-                    onChange = {(e) => setformData({...formData,date:e.target.value})}
+                    onChange = {(e) => setformData({...formData,date:formatDate(e.target.value)})}
                 />
             </Grid>
             <Button className={classes.button}
